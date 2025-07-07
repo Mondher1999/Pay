@@ -61,7 +61,7 @@ export default function Checkout() {
                   <path strokeLinecap="round" strokeLinejoin="round" d="M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z" />
                 </svg>
               </div>
-              <h2 className="text-3xl font-bold text-slate-900 mt-4">Payer votre commande</h1>
+              <h1 className="text-xl sm:text-2xl lg:text-3xl font-bold text-slate-900 mt-4">Payer votre commande</h1>
               <p className="text-slate-500 mt-2">Saisissez les informations pour continuer.</p>
             </div>
 
