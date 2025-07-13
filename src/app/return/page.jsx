@@ -5,18 +5,40 @@ import { stripe } from '../lib/stripe'
 export default async function Return({ searchParams }) {
   const { session_id } = searchParams;
 
+ 
+
   if (!session_id) {
     // It's better to redirect than to throw an error for a missing param.
     return redirect('/');
   }
 
   try {
-    const {
-      status,
-      customer_details: { email: customerEmail }
-    } = await stripe.checkout.sessions.retrieve(session_id, {
+    const session = await stripe.checkout.sessions.retrieve(session_id, {
       expand: ['line_items', 'payment_intent']
     });
+
+    const {
+      status,
+      customer_details: { email: customerEmail },
+      metadata
+    } = session;
+
+
+    const baseURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+
+
+    // Appel API interne pour enregistrer la commande
+    try {
+      await fetch(`${baseURL}/api/save-order`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(metadata),
+      });
+    } catch (err) {
+      console.error("Erreur lors de l'enregistrement de la commande :", err);
+    }
+
+
 
     if (status === 'open') {
       return redirect('/');

@@ -15,30 +15,67 @@ const stripePromise = loadStripe(
 
 export default function Checkout() {
   // Vos états sont conservés tels quels
-  const [amount, setAmount] = useState('')
-  const [note, setNote] = useState('')
+  const [amount,setAmount] = useState('');
+  const [note, setNote] = useState('');
+
+  const [tiktok, setTiktok] = useState('');
+  const [email, setEmail] = useState('');
+  const [firstName, setFirstName] = useState('');
+  const [lastName, setLastName] = useState('');
+  const [address, setAddress] = useState('');
+  const [city, setCity] = useState('');
+  const [postalCode, setPostalCode] = useState('');
+  const [country, setCountry] = useState('FR'); // France par défaut
+  const [phone, setPhone] = useState('');
+  
   const [error, setError] = useState('')
   const [loading, setLoading] = useState(false)
   const [showCheckout, setShowCheckout] = useState(false)
 
   // Votre fonction de validation et de démarrage est conservée
   const startCheckout = async () => {
-    const parsedAmount = parseFloat(amount)
+    const parsedAmount = parseFloat(amount);
     if (!parsedAmount || parsedAmount <= 0) {
-      setError('Veuillez entrer un montant valide.')
-      return
+      setError('Veuillez entrer un montant valide.');
+      return;
     }
-    setError('')
-    setLoading(true)
-    // Pas besoin de simuler, on passe directement à l'affichage du checkout
-    // qui déclenchera le fetchClientSecret
-    setShowCheckout(true) 
-  }
+  
+    if (!email || !firstName || !lastName || !address || !city || !postalCode || !country || !phone) {
+      setError('Veuillez remplir tous les champs de livraison.');
+      return;
+    }
+  
+    setError('');
+    setLoading(true);
+  
+    try {
+      setShowCheckout(true); // affiche le checkout Stripe embarqué
+    } catch (err) {
+      console.error(err);
+      setError(err.message || 'Erreur inconnue');
+      setLoading(false);
+    }
+  };
+  
+
+  
+  
   
   // Options pour Stripe, utilisant votre fonction importée
   const options = {
-    fetchClientSecret: () => fetchCSvr(parseFloat(amount), note),
+    fetchClientSecret: () => fetchCSvr(parseFloat(amount), note, {
+      email,
+      firstName,
+      lastName,
+      address,
+      city,
+      postalCode,
+      country,
+      phone,
+      tiktok
+    })
   }
+  
 
   // Composant pour le spinner du bouton de chargement
   const SpinnerIcon = () => (
@@ -73,37 +110,118 @@ export default function Checkout() {
 
             {/* --- FORMULAIRE --- */}
             <div className="space-y-6">
-              {/* Champ Montant */}
-              <div>
-                <label htmlFor="amount" className="text-sm font-medium text-slate-700 mb-1 block">Montant (€)</label>
-                <div className="relative">
-                  <input
-                    type="number"
-                    id="amount"
-                    min="1"
-                    step="0.01"
-                    value={amount}
-                    onChange={(e) => setAmount(e.target.value)}
-                    placeholder="Ex: 29.99"
-                    className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-900 placeholder:text-slate-400 transition-colors duration-300 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 focus:outline-none"
-                  />
-                </div>
-              </div>
+  {/* --- SECTION MONTANT --- */}
 
-              {/* Champ Référence */}
-              <div>
-                <label htmlFor="note" className="text-sm font-medium text-slate-700 mb-1 block">Référence de commande</label>
-                <div className="relative">
-                   <input
-                    type="text"
-                    id="note"
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                    placeholder="Ex: CMD-458736"
-                    className="w-full px-4 py-3 rounded-lg border border-slate-200 bg-slate-50 text-slate-900 placeholder:text-slate-400 transition-colors duration-300 focus:bg-white focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/50 focus:outline-none"
-                  />
-                </div>
-              </div>
+{/* --- SECTION MONTANT --- */}
+<h2 className="text-xl font-semibold text-slate-800 mb-4">Montant Total</h2>
+
+<div className="grid gap-5 sm:grid-cols-1">
+  {/* Montant */}
+  <div>
+    <input
+      type="number"
+      id="amount"
+      min="1"
+      step="0.01"
+      value={amount}
+      onChange={(e) => setAmount(e.target.value)}
+      placeholder="Montant"
+      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+    />
+  </div>
+
+  {/* Référence */}
+  <div>
+    <input
+      type="text"
+      id="note"
+      value={note}
+      onChange={(e) => setNote(e.target.value)}
+      placeholder="Référence de commande"
+      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+    />
+  </div>
+
+  <div>
+   <input
+      type="text"
+      id="tiktok"
+      value={tiktok}
+      onChange={(e) => setTiktok(e.target.value)}
+
+      placeholder="Pseudo tiktok"
+      className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+    />
+  </div>
+</div>
+
+{/* --- SECTION ADRESSE DE LIVRAISON --- */}
+<h2 className="text-xl font-semibold text-slate-800 mt-8 mb-4">Adresse de livraison</h2>
+
+<div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
+  {/* Email */}
+  <div className="sm:col-span-2">
+    <input type="email"       onChange={(e) => setEmail(e.target.value)}
+  value={email}  id="email" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" placeholder="E-mail" />
+  </div>
+
+  {/* Prénom */}
+  <div>
+    <input type="text"       onChange={(e) => setFirstName(e.target.value)}
+ value={firstName} id="firstName" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" placeholder="Prénom" />
+  </div>
+
+  {/* Nom */}
+  <div>
+    <input type="text" value={lastName}       onChange={(e) => setLastName(e.target.value)}
+ id="lastName" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" placeholder="Nom" />
+  </div>
+
+  {/* Adresse */}
+  <div className="sm:col-span-2">
+    <input type="text" value={address}       onChange={(e) => setAddress(e.target.value)}
+ id="address" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" placeholder="Adresse" />
+  </div>
+
+  {/* Ville */}
+  <div>
+    <input type="text" value={city}       onChange={(e) => setCity(e.target.value)}
+ id="city" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" placeholder="Ville" />
+  </div>
+
+  {/* Code postal */}
+  <div>
+    <input type="text" value={postalCode}       onChange={(e) => setPostalCode(e.target.value)}
+ id="postalCode" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" placeholder="Code postal" />
+  </div>
+
+  {/* Pays */}
+  <div>
+  <label htmlFor="country" className="text-sm font-medium text-slate-700 mb-1 block">Pays</label>
+  <select
+  id="country"
+  value={country}
+  onChange={(e) => setCountry(e.target.value)}
+  className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+>
+  <option value="FR">France</option>
+  <option value="BE">Belgique</option>
+  <option value="CA">Canada</option>
+  <option value="CH">Suisse</option>
+  <option value="LU">Luxembourg</option>
+</select>
+
+</div>
+
+
+  {/* Téléphone */}
+  <div>
+    <label htmlFor="phone"      
+  className="text-sm font-medium text-slate-700 mb-1 block">Numéro de téléphone</label>
+    <input type="tel" id="phone"  value={phone}  onChange={(e) => setPhone(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" placeholder="Numéro de téléphone" />
+  </div>
+</div>
+
 
               {/* Message d'Erreur */}
               {error && (
@@ -116,7 +234,7 @@ export default function Checkout() {
               {/* --- Bouton de Paiement --- */}
               <button
                 onClick={startCheckout}
-                disabled={loading || !amount}
+                disabled={loading || !amount ||!email || !firstName || !lastName || !address || !city || !postalCode || !country || !phone || !tiktok || !note}
                 className="w-full flex justify-center items-center bg-indigo-600 text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed group"
               >
                 {loading ? <SpinnerIcon /> : <span>Payer maintenant</span>}
