@@ -1,6 +1,16 @@
-import { cert, initializeApp, getApps, getApp } from 'firebase-admin/app';
+import { cert, getApps, getApp, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
-import serviceAccount from '../../../../serviceAccountKey.json'; // ou le chemin correct
+import { readFileSync } from 'fs';
+import path from 'path';
+
+let serviceAccount;
+
+try {
+  const filePath = path.resolve(process.cwd(), 'serviceAccountKey.json');
+  serviceAccount = JSON.parse(readFileSync(filePath, 'utf8'));
+} catch (err) {
+  console.error('❌ Erreur lors du chargement du fichier serviceAccountKey.json:', err);
+}
 
 const app = getApps().length === 0
   ? initializeApp({ credential: cert(serviceAccount) })
@@ -8,23 +18,33 @@ const app = getApps().length === 0
 
 const db = getFirestore(app);
 
-export default async function handler(req, res) {
-  if (req.method !== 'POST') {
-    return res.status(405).json({ error: 'Méthode non autorisée' });
-  }
-
+// ✅ Méthode POST compatible App Router
+export async function POST(request) {
   try {
-    const data = req.body;
+    const data = await request.json();
 
-    // Sauvegarde dans Firestore
-    await db.collection('orders').add({
+    if (!data || Object.keys(data).length === 0) {
+      return new Response(JSON.stringify({ error: 'Le corps de la requête est vide.' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+
+    const docRef = await db.collection('orders').add({
       ...data,
       createdAt: new Date()
     });
 
-    res.status(200).json({ success: true });
+    return new Response(JSON.stringify({ success: true, id: docRef.id }), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+
   } catch (error) {
-    console.error('Erreur Firestore:', error);
-    res.status(500).json({ error: 'Erreur lors de l’enregistrement dans Firestore' });
+    console.error('🔥 Erreur Firestore:', error);
+    return new Response(JSON.stringify({ error: 'Erreur serveur' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
   }
 }
