@@ -20,19 +20,27 @@ export default async function Return({ searchParams }) {
     const {
       status,
       customer_details: { email: customerEmail },
+      amount_total,
       metadata
     } = session;
 
 
-    const baseURL = process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000';
+    const baseURL = "https://api-slwdtp5cqq-uc.a.run.app";
+
+
+    const orderPayload = {
+      ...metadata, // Spread all properties from metadata
+      amount: (amount_total / 100).toFixed(2), // <-- Add the corrected amount
+      stripeSessionId: session.id // It's also good practice to save the session ID
+    };
 
 
     // Appel API interne pour enregistrer la commande
     try {
-      await fetch(`${baseURL}/api/save-order`, {
+      await fetch(`${baseURL}/orders/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify(metadata),
+        body: JSON.stringify(orderPayload),
       });
     } catch (err) {
       console.error("Erreur lors de l'enregistrement de la commande :", err);
