@@ -1,4 +1,4 @@
-import { cert, getApps, getApp, initializeApp } from 'firebase-admin/app';
+/*import { cert, getApps, getApp, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { readFileSync } from 'fs';
 import path from 'path';
@@ -48,3 +48,4 @@ export async function POST(request) {
     });
   }
 }
+*/
