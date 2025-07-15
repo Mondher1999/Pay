@@ -1,6 +1,3 @@
-/*
-
-
 import { cert, getApps, getApp, initializeApp } from 'firebase-admin/app';
 import { getFirestore } from 'firebase-admin/firestore';
 import { readFileSync } from 'fs';
@@ -50,39 +47,4 @@ export async function POST(request) {
       headers: { 'Content-Type': 'application/json' }
     });
   }
-<<<<<<< HEAD
 }
-
-
-  try {
-    const data = await request.json();
-
-    if (!data || Object.keys(data).length === 0) {
-      return new Response(JSON.stringify({ error: 'Request body is empty.' }), {
-        status: 400,
-        headers: { 'Content-Type': 'application/json' }
-      });
-    }
-
-    const docRef = await db.collection('orders').add({
-      ...data,
-      createdAt: new Date()
-    });
-
-    return new Response(JSON.stringify({ success: true, id: docRef.id }), {
-      status: 200,
-      headers: { 'Content-Type': 'application/json' }
-    });
-
-  } catch (error) {
-    // Log the detailed error on the server for debugging.
-    console.error('🔥 Firestore Error:', error);
-    return new Response(JSON.stringify({ error: 'Server error during Firestore operation.' }), {
-      status: 500,
-      headers: { 'Content-Type': 'application/json' }
-    });
-  }
-}
->>>>>>> d7aceb38fc9db54d08ad8e7466899b7a934a0a99
-
-*/
