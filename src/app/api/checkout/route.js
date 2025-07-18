@@ -1,4 +1,4 @@
-// app/api/checkout/route.js
+///////// app/api/checkout/route.js
 import { NextResponse } from 'next/server'
 import { stripe } from '../../lib/stripe'
 
