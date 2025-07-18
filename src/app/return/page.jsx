@@ -24,7 +24,7 @@ export default async function Return({ searchParams }) {
       metadata
     } = session;
 
-    const baseURLAPI = env.STRIPE_WEBHOOK_SECRET;
+    const baseURLAPI = env.baseURLAPI;
 
 
     const orderPayload = {
