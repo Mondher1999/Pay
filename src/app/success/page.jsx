@@ -25,7 +25,7 @@ export default async function Return({ searchParams }) {
     } = session;
 
 
-    const baseURL = "https://api-slwdtp5cqq-uc.a.run.app";
+    const baseURL = env.baseURLAPI;
 
 
     const orderPayload = {
