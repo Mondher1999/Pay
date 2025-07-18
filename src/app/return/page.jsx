@@ -24,8 +24,7 @@ export default async function Return({ searchParams }) {
       metadata
     } = session;
 
-
-    const baseURL = "https://api-slwdtp5cqq-uc.a.run.app";
+    const baseURLAPI = env.STRIPE_WEBHOOK_SECRET;
 
 
     const orderPayload = {
@@ -37,7 +36,7 @@ export default async function Return({ searchParams }) {
 
     // Appel API interne pour enregistrer la commande
     try {
-      await fetch(`${baseURL}/orders/orders`, {
+      await fetch(`${baseURLAPI}/orders/orders`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify(orderPayload),
