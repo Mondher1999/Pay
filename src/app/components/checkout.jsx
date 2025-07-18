@@ -1,23 +1,10 @@
 'use client'
 
 import { useState } from 'react'
-import {
-  EmbeddedCheckout,
-  EmbeddedCheckoutProvider,
-} from '@stripe/react-stripe-js'
-import { loadStripe } from '@stripe/stripe-js'
-import { fetchClientSecret as fetchCSvr } from '../actions/stripe' // On garde votre action serveur
-
-// Initialisation de Stripe avec votre clé publique
-const stripePromise = loadStripe(
-  process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY
-)
 
 export default function Checkout() {
-  // Vos états sont conservés tels quels
-  const [amount,setAmount] = useState('');
+  const [amount, setAmount] = useState('');
   const [note, setNote] = useState('');
-
   const [tiktok, setTiktok] = useState('');
   const [email, setEmail] = useState('');
   const [firstName, setFirstName] = useState('');
@@ -25,31 +12,53 @@ export default function Checkout() {
   const [address, setAddress] = useState('');
   const [city, setCity] = useState('');
   const [postalCode, setPostalCode] = useState('');
-  const [country, setCountry] = useState('FR'); // France par défaut
+  const [country, setCountry] = useState('FR');
   const [phone, setPhone] = useState('');
-  
-  const [error, setError] = useState('')
-  const [loading, setLoading] = useState(false)
-  const [showCheckout, setShowCheckout] = useState(false)
+  const [error, setError] = useState('');
+  const [loading, setLoading] = useState(false);
 
-  // Votre fonction de validation et de démarrage est conservée
   const startCheckout = async () => {
     const parsedAmount = parseFloat(amount);
     if (!parsedAmount || parsedAmount <= 0) {
       setError('Veuillez entrer un montant valide.');
       return;
     }
-  
+
     if (!email || !firstName || !lastName || !address || !city || !postalCode || !country || !phone) {
       setError('Veuillez remplir tous les champs de livraison.');
       return;
     }
-  
+
     setError('');
     setLoading(true);
-  
+
     try {
-      setShowCheckout(true); // affiche le checkout Stripe embarqué
+      const res = await fetch('/api/checkout', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          amount,
+          note,
+          metadata: {
+            email,
+            firstName,
+            lastName,
+            address,
+            city,
+            postalCode,
+            country,
+            phone,
+            tiktok,
+          },
+        }),
+      });
+
+      const data = await res.json();
+      if (data?.url) {
+        window.location.href = data.url;
+      } else {
+        throw new Error('Échec de la redirection vers Stripe');
+      }
     } catch (err) {
       console.error(err);
       setError(err.message || 'Erreur inconnue');
@@ -57,13 +66,13 @@ export default function Checkout() {
     }
   };
   
-
-  
-  
   
   // Options pour Stripe, utilisant votre fonction importée
   const options = {
-    fetchClientSecret: () => fetchCSvr(parseFloat(amount), note, {
+    fetchClientSecret: () => fetchCSvr(
+      parseFloat(amount), 
+      note, 
+      {
       email,
       firstName,
       lastName,
@@ -89,7 +98,7 @@ export default function Checkout() {
 
   return (
     <div className="min-h-screen bg-indigo-100 flex items-center justify-center font-sans p-4">
-      {!showCheckout ? (
+    
         <div className="w-full max-w-full sm:max-w-3xl lg:max-w-6xl grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* COLONNE GAUCHE — FORMULAIRE */}
           <div className="space-y-8">
@@ -201,13 +210,9 @@ export default function Checkout() {
             </div>
           </div>
         </div>
-      ) : (
-        <div className="bg-indigo-100 w-full max-w-full sm:max-w-4xl lg:max-w-1xl rounded-2xl shadow-lg animate-fade-in p-1 sm:p-2">
-          <EmbeddedCheckoutProvider stripe={stripePromise} options={options}>
-            <EmbeddedCheckout />
-          </EmbeddedCheckoutProvider>
-        </div>
-      )}
+      : (
+      
+      )
     </div>
   );
 }  
