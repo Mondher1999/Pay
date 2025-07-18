@@ -8,7 +8,7 @@ export default async function Return({ searchParams }) {
  
 
   if (!session_id) {
-    // It's better to redirect than to throw an error for a missing param.
+    //// It's better to redirect than to throw an error for a missing param.
     return redirect('/');
   }
 
