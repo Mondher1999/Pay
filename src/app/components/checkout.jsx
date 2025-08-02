@@ -116,7 +116,7 @@ const paymentOptions = [
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({
-          amount,
+          amount: grandTotal.toFixed(2), // use grandTotal here instead of amount
           note,
           metadata: {
             email,
@@ -208,7 +208,7 @@ const paymentOptions = [
             className="w-full pl-4 pr-10 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
           />
           <div className="absolute inset-y-0 right-0 pr-6 flex items-center pointer-events-none">
-            <span className="text-[#D4AF37]">€   </span>
+            <span className="text-[#D4AF37">€   </span>
           </div>
         </div>              <input type="text" id="note" value={note} onChange={(e) => setNote(e.target.value)} placeholder="Référence de commande" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" />
               <input type="text" id="tiktok" value={tiktok} onChange={(e) => setTiktok(e.target.value)} placeholder="Pseudo TikTok" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" />

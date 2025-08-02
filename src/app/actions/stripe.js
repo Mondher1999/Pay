@@ -10,7 +10,7 @@ export async function fetchClientSecret(amount, note, metadata) {
     throw new Error('Montant invalide')
   }
 
-  const unitAmount = 500 + Math.round(Number(amount) * 100) // centimes pour EUR
+  const unitAmount =  Math.round(Number(amount) * 100) // centimes pour EUR
 
   const session = await stripe.checkout.sessions.create({
     ui_mode: 'embedded',

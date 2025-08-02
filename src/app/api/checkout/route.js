@@ -11,7 +11,7 @@ export async function POST(req) {
   }
 
   const origin = req.headers.get('origin') || process.env.NEXT_PUBLIC_SITE_URL || 'http://localhost:3000'
-  const unitAmount = 500 + Math.round(Number(amount) * 100) // en centimes
+  const unitAmount = Math.round(Number(amount) * 100) // en centimes
 
   try {
     const session = await stripe.checkout.sessions.create({
