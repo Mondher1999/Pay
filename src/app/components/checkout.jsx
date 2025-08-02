@@ -81,7 +81,7 @@ const paymentOptions = [
   { id: 'card', name: 'Carte Bancaire', icon: '/icons/visa.png' },
 
   { id: 'paypal', name: 'PayPal', icon: 'icons/paypal.svg' },
-  { id: 'klarna', name: 'Klarna', icon: 'icons/klarna.svg' },
+  { id: 'klarna', name: 'Klarna', icon: 'icons/klarna.svg', description: 'Payer en 3 ou 4 fois' },
   { id: 'applepay', name: 'Apple Pay', icon: 'icons/applepaycom.svg' }
 ];
 
@@ -249,42 +249,50 @@ const paymentOptions = [
 
           {/* --- SECTION PAIEMENT --- */}
           <div className="space-y-4">
-              <h2 className="text-xl font-bold text-[#c28840]">Méthode de paiement</h2>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-            {paymentOptions.map((option) => (
-              <label
-                key={option.id}
-                className={`relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer 
-                           ${paymentMethod === option.id 
-                             ? 'border-indigo-600 bg-indigo-50 shadow-lg scale-105' 
-                             : 'border-slate-200 bg-white hover:border-indigo-400'}`}
-              >
-                <input 
-                  type="radio" 
-                  name="paymentMethod" 
-                  value={option.id} 
-                  checked={paymentMethod === option.id} 
-                  onChange={(e) => setPaymentMethod(e.target.value)} 
-                  className="hidden" 
-                />
-                
-                {/* L'icône est maintenant une balise <img> */}
-                <div className="flex-shrink-0 w-20 flex justify-center items-center h-8">
-                  <img src={option.icon} alt={`Logo ${option.name}`} className="max-h-full" />
-                </div>
-                
-                <span className="ml-4 font-semibold text-slate-700">{option.name}</span>
-                
-                {paymentMethod === option.id && (
-                  <div className="absolute top-3 right-3 flex items-center justify-center w-6 h-6 bg-indigo-600 text-white rounded-full">
-                    <CheckIcon />
-                  </div>
-                )}
-              </label>
-            ))}
+  <h2 className="text-xl font-bold text-[#c28840]">Méthode de paiement</h2>
+  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+    {paymentOptions.map((option) => (
+      <label
+        key={option.id}
+        className={`relative flex items-center p-4 rounded-xl border-2 transition-all duration-300 cursor-pointer 
+                    ${paymentMethod === option.id 
+                      ? 'border-indigo-600 bg-indigo-50 shadow-lg scale-105' 
+                      : 'border-slate-200 bg-white hover:border-indigo-400'}`}
+      >
+        <input 
+          type="radio" 
+          name="paymentMethod" 
+          value={option.id} 
+          checked={paymentMethod === option.id} 
+          onChange={(e) => setPaymentMethod(e.target.value)} 
+          className="hidden" 
+        />
+        
+        <div className="flex-shrink-0 w-20 flex justify-center items-center h-8">
+          <img src={option.icon} alt={`Logo ${option.name}`} className="max-h-full" />
+        </div>
+        
+        {/* --- MODIFICATION START --- */}
+        {/* This container will hold the text content */}
+        <div className="ml-4 flex flex-col">
+          <span className="font-semibold text-slate-700">{option.name}</span>
+          
+          {/* This line checks if a description exists and renders it if true */}
+          {option.description && (
+            <span className="text-xs text-black mt-1">{option.description}</span>
+          )}
+        </div>
+        {/* --- MODIFICATION END --- */}
+        
+        {paymentMethod === option.id && (
+          <div className="absolute top-3 right-3 flex items-center justify-center w-6 h-6 bg-indigo-600 text-white rounded-full">
+            <CheckIcon />
           </div>
-
-          </div>
+        )}
+      </label>
+    ))}
+  </div>
+</div>
             {/* ...le reste du formulaire... */}
 
             {/* --- Case à cocher pour CGV --- */}
