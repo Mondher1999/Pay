@@ -19,6 +19,7 @@ export default function Checkout() {
   const [error, setError] = useState('');
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('card');
+  const [termsAccepted, setTermsAccepted] = useState(false);
 
 
   // Icônes SVG (vous pouvez les placer dans un fichier séparé ou en haut de votre composant)
@@ -77,7 +78,7 @@ const PAYMENT_METHOD_NAMES = {
 
 }, [amount, paymentMethod]);
 const paymentOptions = [
-  { id: 'card', name: 'Carte Bancaire', icon: '/icons/CardIcon.svg' },
+  { id: 'card', name: 'Carte Bancaire', icon: '/icons/visa.png' },
 
   { id: 'paypal', name: 'PayPal', icon: 'icons/paypal.svg' },
   { id: 'klarna', name: 'Klarna', icon: 'icons/klarna.svg' },
@@ -194,7 +195,7 @@ const paymentOptions = [
 
           {/* --- Montant --- */}
           <div className="space-y-6">
-          <h2 className="text-xl font-bold text-[#D4AF37]">Montant total</h2>
+          <h2 className="text-xl font-bold text-[#c28840]">Montant total</h2>
           <div className="grid gap-5 sm:grid-cols-1">
             <div className="relative">
           <input
@@ -217,7 +218,7 @@ const paymentOptions = [
 
           {/* --- Adresse de livraison --- */}
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-[#D4AF37]">Adresse de livraison</h2>
+            <h2 className="text-xl font-bold text-[#c28840]">Adresse de livraison</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="sm:col-span-2">
                 <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" />
@@ -230,7 +231,7 @@ const paymentOptions = [
               <input type="text" id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ville" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" />
               <input type="text" id="postalCode" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} placeholder="Code postal" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" />
               <div>
-                <label htmlFor="country" className="text-sm font-medium text-[#D4AF37] mb-1 block">Pays</label>
+                <label htmlFor="country" className="text-sm font-medium text-[#c28840] mb-1 block">Pays</label>
                 <select id="country" value={country} onChange={(e) => setCountry(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition">
                   <option value="FR">France</option>
                   <option value="BE">Belgique</option>
@@ -240,7 +241,7 @@ const paymentOptions = [
                 </select>
               </div>
               <div>
-                <label htmlFor="phone" className="text-sm font-medium text-[#D4AF37] mb-1 block">Numéro de téléphone</label>
+                <label htmlFor="phone" className="text-sm font-medium text-[#c28840] mb-1 block">Numéro de téléphone</label>
                 <input type="tel" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Numéro de téléphone" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" />
               </div>
             </div>
@@ -248,7 +249,7 @@ const paymentOptions = [
 
           {/* --- SECTION PAIEMENT --- */}
           <div className="space-y-4">
-              <h2 className="text-xl font-bold text-[#D4AF37]">Méthode de paiement</h2>
+              <h2 className="text-xl font-bold text-[#c28840]">Méthode de paiement</h2>
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
             {paymentOptions.map((option) => (
               <label
@@ -286,6 +287,23 @@ const paymentOptions = [
           </div>
             {/* ...le reste du formulaire... */}
 
+            {/* --- Case à cocher pour CGV --- */}
+<div className="flex items-start space-x-2 mt-4">
+  <input
+    type="checkbox"
+    id="terms"
+    checked={termsAccepted}
+    onChange={(e) => setTermsAccepted(e.target.checked)}
+    className="mt-1 h-4 w-4 text-[#c28840] border-gray-300 rounded focus:ring-[#c28840]"
+  />
+  <label htmlFor="terms" className="text-sm text-white">
+    J'accepte les{" "}
+    <Link href="/content/conditions-utilisation" className="text-[#c28840] underline hover:text-indigo-600">
+      conditions générales de vente
+    </Link>
+  </label>
+</div>
+
           {/* Message d’erreur */}
           {error && (
             <div className="flex items-center space-x-2 text-red-600 bg-red-50 p-3 rounded-lg">
@@ -298,9 +316,9 @@ const paymentOptions = [
           <button
             onClick={startCheckout}
             disabled={loading || !amount || !email || !firstName || !lastName || !address || !city || !postalCode || !country || !phone || !tiktok || !note}
-            className="w-full flex justify-center items-center bg-[#D4AF37] text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed group"
+            className="w-full flex justify-center items-center bg-[#c28840] text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed group"
           >
-            {loading ? <SpinnerIcon /> : <span>Payer maintenant</span>}
+            {loading ? <SpinnerIcon /> : <span>Confirmer la commande</span>}
             {!loading && (
               <svg xmlns="http://www.w3.org/2000/svg" className="h-5 w-5 ml-2 transition-transform duration-300 group-hover:translate-x-1" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
                 <path strokeLinecap="round" strokeLinejoin="round" d="M17 8l4 4m0 0l-4 4m4-4H3" />
@@ -334,7 +352,7 @@ const paymentOptions = [
         </div>
 
         {/* Total final mis à jour */}
-        <div className="flex justify-between font-bold text-[#D4AF37] border-t pt-3 mt-3 text-base">
+        <div className="flex justify-between font-bold text-[#c28840] border-t pt-3 mt-3 text-base">
             <span>Total à payer</span>
             <span>{grandTotal.toFixed(2)} €</span>
         </div>
@@ -343,20 +361,25 @@ const paymentOptions = [
 </div>
       </div>
       
+      
       {/* --- DÉBUT DU FOOTER AJOUTÉ --- */}
 
       
       <footer className="text-center py-8 mt-8 w-full">
   <div className="flex justify-center items-center flex-wrap gap-x-6 gap-y-2 mb-3">
     {/* Remplacement des <a> par <Link> */}
-    <Link href="/content/mentions-legales" className="text-sm text-[#D4AF37] hover:text-indigo-600 hover:underline">
+    <Link href="/content/mentions-legales" className="text-sm text-[#c28840] hover:text-indigo-600 hover:underline">
       Mentions légales
     </Link>
-    <Link href="/content/conditions-utilisation" className="text-sm text-[#D4AF37] hover:text-indigo-600 hover:underline">
+    <Link href="/content/conditions-utilisation" className="text-sm text-[#c28840] hover:text-indigo-600 hover:underline">
       Conditions générales de vente
     </Link>
-    <Link href="/content/Politique-de-confidentialite" className="text-sm text-[#D4AF37] hover:text-indigo-600 hover:underline">
+    <Link href="/content/Politique-de-confidentialite" className="text-sm text-[#c28840] hover:text-indigo-600 hover:underline">
       Politique de confidentialité
+    </Link>
+
+    <Link href="/content/Contactez-nous" className="text-sm text-[#c28840] hover:text-indigo-600 hover:underline">
+    Contactez-nous
     </Link>
 
   </div>
