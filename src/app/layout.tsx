@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Inter, Roboto_Mono,Geist,Poppins  } from "next/font/google";
 import "./globals.css";
+import 'leaflet/dist/leaflet.css';
 
 const poppins = Poppins({
   weight: '700',

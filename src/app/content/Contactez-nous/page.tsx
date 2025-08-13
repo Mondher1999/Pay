@@ -44,25 +44,34 @@ const ContactPage = () => {
               </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">Email</h3>
-                <a href="mailto:mh.boutique.contact1@gmail.com" className="text-[#c28840] hover:underline">
+                <a href="mailto:mh.boutique.contact1@gmail.com" className="text-black hover:underline">
                   mh.boutique.contact1@gmail.com
                 </a>
               </div>
             </div>
 
-            {/* Contact par Téléphone */}
+       
+              {/*
+
             <div className="flex items-start space-x-4">
-              <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
-                <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-[#c28840]" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-                  <path strokeLinecap="round" strokeLinejoin="round" d="M3 5a2 2 0 012-2h3.28a1 1 0 01.948.684l1.498 4.493a1 1 0 01-.502 1.21l-2.257 1.13a11.042 11.042 0 005.516 5.516l1.13-2.257a1 1 0 011.21-.502l4.493 1.498a1 1 0 01.684.949V19a2 2 0 01-2 2h-1C9.716 21 3 14.284 3 6V5z" />
-                </svg>
-              </div>
+            <div className="flex-shrink-0 w-10 h-10 bg-indigo-100 rounded-full flex items-center justify-center">
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              className="h-6 w-6 text-[#25D366]" // WhatsApp green
+              fill="currentColor"
+              viewBox="0 0 24 24"
+            >
+              <path d="M20.52 3.48A11.77 11.77 0 0012 0C5.37 0 .01 5.37.01 12c0 2.11.55 4.18 1.6 6.01L0 24l6.17-1.58A11.94 11.94 0 0012 24c6.63 0 12-5.37 12-12 0-3.2-1.25-6.21-3.48-8.52zM12 21.82a9.78 9.78 0 01-4.99-1.36l-.36-.21-3.67.94.98-3.57-.23-.37A9.76 9.76 0 1121.82 12c0 5.4-4.42 9.82-9.82 9.82zm5.36-7.45c-.29-.15-1.73-.85-1.99-.94-.27-.1-.47-.15-.67.15-.2.29-.77.94-.94 1.14-.17.19-.35.22-.64.07-.29-.15-1.22-.45-2.32-1.44-.86-.77-1.44-1.72-1.61-2.01-.17-.29-.02-.45.13-.6.13-.13.29-.35.44-.52.15-.17.2-.29.3-.48.1-.19.05-.36-.02-.51-.07-.15-.67-1.61-.91-2.2-.24-.58-.48-.5-.67-.51h-.57c-.19 0-.5.07-.76.36-.26.29-1 1-1 2.43s1.02 2.82 1.16 3.01c.15.19 2 3.06 4.85 4.29.68.29 1.21.46 1.62.59.68.22 1.3.19 1.79.12.55-.08 1.73-.71 1.97-1.39.24-.68.24-1.27.17-1.39-.07-.12-.26-.19-.55-.34z" />
+            </svg>
+          </div>
               <div>
                 <h3 className="text-lg font-semibold text-gray-800">Téléphone</h3>
                 <p>5558896633</p>
               </div>
             </div>
+            */}
           </div>
+          
 
           {/* Note importante */}
           <div className="mt-10 p-4 bg-yellow-50 border-l-4 border-yellow-400 rounded-r-lg">

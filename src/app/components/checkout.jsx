@@ -3,6 +3,7 @@
 import { useState } from 'react'
 import Link from 'next/link';
 import { useMemo } from 'react';  
+import MondialRelayModalSelector from './MondialRelayPicker';
 
 export default function Checkout() {
   const [amount, setAmount] = useState('');
@@ -20,7 +21,9 @@ export default function Checkout() {
   const [loading, setLoading] = useState(false);
   const [paymentMethod, setPaymentMethod] = useState('card');
   const [termsAccepted, setTermsAccepted] = useState(false);
+  const [shippingMethod, setShippingMethod] = useState('mondial_relay'); // 'mondial_relay' ou 'home_delivery'
 
+  const [shippingAddress, setShippingAddress] = useState(null);
 
   // Icônes SVG (vous pouvez les placer dans un fichier séparé ou en haut de votre composant)
 // Icônes SVG Améliorées
@@ -49,6 +52,27 @@ const PAYMENT_METHOD_NAMES = {
     paypal: 'PayPal',
     klarna: 'Klarna'
 };
+
+
+  // Cette fonction sera passée en prop à MondialRelayPicker
+  const handlePointSelection = (point) => {
+    console.log("🔥🔥 Point relais sélectionné :", JSON.stringify(point, null, 2));
+    setShippingAddress({ type: 'mondial_relay', details: point });
+  };
+  
+
+
+  const handlePlaceOrder = () => {
+    // ...logique pour récupérer les autres infos du formulaire (panier, etc.)
+    const orderData = {
+      // ... autres données
+      shipping: shippingAddress,
+    };
+    
+    // Vous appelez ici votre backend pour créer la commande
+    // fetch('/api/orders', { method: 'POST', body: JSON.stringify(orderData), ... })
+    console.log("Envoi de la commande au backend :", orderData);
+  };
 
 
  // --- DÉBUT DU BLOC DE CALCUL ---
@@ -97,55 +121,70 @@ const paymentOptions = [
       <path strokeLinecap="round" strokeLinejoin="round" d="M5 13l4 4L19 7" />
     </svg>
 );
-  const startCheckout = async () => {
-    const parsedAmount = parseFloat(amount);
-    if (!parsedAmount || parsedAmount <= 0) {
-      setError('Veuillez entrer un montant valide.');
-      return;
-    }
-
-    if (!email || !firstName || !lastName || !address || !city || !postalCode || !country || !phone) {
-      setError('Veuillez remplir tous les champs de livraison.');
-      return;
-    }
-
-    setError('');
-    setLoading(true);
-
-    try {
-      const res = await fetch('/api/checkout', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          amount: grandTotal.toFixed(2), // use grandTotal here instead of amount
-          note,
-          metadata: {
-            email,
-            firstName,
-            lastName,
-            address,
-            city,
-            postalCode,
-            country,
-            phone,
-            tiktok,
-          },
-        }),
-      });
-
-      const data = await res.json();
-      if (data?.url) {
-        window.location.href = data.url;
-      } else {
-        throw new Error('Échec de la redirection vers Stripe');
+    const startCheckout = async () => {
+      const parsedAmount = parseFloat(amount);
+      if (!parsedAmount || parsedAmount <= 0) {
+        setError('Veuillez entrer un montant valide.');
+        return;
       }
-    } catch (err) {
-      console.error(err);
-      setError(err.message || 'Erreur inconnue');
-      setLoading(false);
+
+      if (!shippingAddress) {
+        setError('Veuillez choisir une méthode de livraison et un point relais.');
+        return;
     }
-  };
-  
+
+      if (!email || !firstName || !lastName || !address || !city || !postalCode || !country || !phone) {
+        setError('Veuillez remplir tous les champs de livraison.');
+        return;
+      }
+
+      setError('');
+      setLoading(true);
+
+      try {
+        const res = await fetch('/api/checkout', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({
+            amount: grandTotal.toFixed(2), // use grandTotal here instead of amount
+          
+            note,
+            metadata: {
+              email,
+              firstName,
+              lastName,
+              address,
+              city,
+              postalCode,
+              country,
+              
+              phone,
+              tiktok,
+
+                // ✅ Ajoute les données du point relais ici
+              pointRelais_Num: shippingAddress?.details?.Num || '',
+              pointRelais_Nom: shippingAddress?.details?.Nom || '',
+              pointRelais_Adresse1: shippingAddress?.details?.Adresse1 || '',
+              pointRelais_Adresse2: shippingAddress?.details?.Adresse2 || '',
+              pointRelais_CP: shippingAddress?.details?.CP || '',
+              pointRelais_Ville: shippingAddress?.details?.Ville || '',
+            },
+          }),
+        });
+
+        const data = await res.json();
+        if (data?.url) {
+          window.location.href = data.url;
+        } else {
+          throw new Error('Échec de la redirection vers Stripe');
+        }
+      } catch (err) {
+        console.error(err);
+        setError(err.message || 'Erreur inconnue');
+        setLoading(false);
+      }
+    };
+    
   
   // Options pour Stripe, utilisant votre fonction importée
   const options = {
@@ -195,7 +234,7 @@ const paymentOptions = [
 
           {/* --- Montant --- */}
           <div className="space-y-6">
-          <h2 className="text-xl font-bold text-[#c28840]">Montant total</h2>
+          <h2 className="text-xl font-bold text-white">Montant total</h2>
           <div className="grid gap-5 sm:grid-cols-1">
             <div className="relative">
           <input
@@ -218,7 +257,7 @@ const paymentOptions = [
 
           {/* --- Adresse de livraison --- */}
           <div className="space-y-6">
-            <h2 className="text-xl font-bold text-[#c28840]">Adresse de livraison</h2>
+            <h2 className="text-xl font-bold text-white">Adresse de livraison</h2>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-5">
               <div className="sm:col-span-2">
                 <input type="email" id="email" value={email} onChange={(e) => setEmail(e.target.value)} placeholder="E-mail" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" />
@@ -231,17 +270,16 @@ const paymentOptions = [
               <input type="text" id="city" value={city} onChange={(e) => setCity(e.target.value)} placeholder="Ville" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" />
               <input type="text" id="postalCode" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} placeholder="Code postal" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" />
               <div>
-                <label htmlFor="country" className="text-sm font-medium text-[#c28840] mb-1 block">Pays</label>
+                <label htmlFor="country" className="text-sm font-medium text-white mb-1 block">Pays</label>
                 <select id="country" value={country} onChange={(e) => setCountry(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition">
                   <option value="FR">France</option>
                   <option value="BE">Belgique</option>
-                  <option value="CA">Canada</option>
-                  <option value="CH">Suisse</option>
-                  <option value="LU">Luxembourg</option>
+                  <option value="ITA">Italie</option>
+                <option value="GER">Allemagne</option>
                 </select>
               </div>
               <div>
-                <label htmlFor="phone" className="text-sm font-medium text-[#c28840] mb-1 block">Numéro de téléphone</label>
+                <label htmlFor="phone" className="text-sm font-medium text-white mb-1 block">Numéro de téléphone</label>
                 <input type="tel" id="phone" value={phone} onChange={(e) => setPhone(e.target.value)} placeholder="Numéro de téléphone" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" />
               </div>
             </div>
@@ -249,7 +287,7 @@ const paymentOptions = [
 
           {/* --- SECTION PAIEMENT --- */}
           <div className="space-y-4">
-  <h2 className="text-xl font-bold text-[#c28840]">Méthode de paiement</h2>
+  <h2 className="text-xl font-bold text-white">Méthode de paiement</h2>
   <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
     {paymentOptions.map((option) => (
       <label
@@ -295,6 +333,16 @@ const paymentOptions = [
 </div>
             {/* ...le reste du formulaire... */}
 
+            <div className="container mx-auto ">
+      <h1 className="text-xl text-white font-bold mb-6">Mode de livraison</h1>
+      
+      {/* ... autres champs du formulaire ... */}
+
+      <MondialRelayModalSelector onPointSelected={handlePointSelection} />
+
+   
+    </div>
+
             {/* --- Case à cocher pour CGV --- */}
 <div className="flex items-start space-x-2 mt-4">
   <input
@@ -302,15 +350,18 @@ const paymentOptions = [
     id="terms"
     checked={termsAccepted}
     onChange={(e) => setTermsAccepted(e.target.checked)}
-    className="mt-1 h-4 w-4 text-[#c28840] border-gray-300 rounded focus:ring-[#c28840]"
+    className="mt-1 h-4 w-4 text-white border-gray-300 rounded focus:ring-white"
   />
   <label htmlFor="terms" className="text-sm text-white">
     J'accepte les{" "}
-    <Link href="/content/conditions-utilisation" className="text-[#c28840] underline hover:text-indigo-600">
+    <Link href="/content/conditions-utilisation" className="text-white underline hover:text-indigo-600">
       conditions générales de vente
     </Link>
   </label>
 </div>
+
+
+
 
           {/* Message d’erreur */}
           {error && (
@@ -323,8 +374,8 @@ const paymentOptions = [
           {/* Bouton Paiement */}
           <button
             onClick={startCheckout}
-            disabled={loading || !amount || !email || !firstName || !lastName || !address || !city || !postalCode || !country || !phone || !tiktok || !note}
-            className="w-full flex justify-center items-center bg-[#c28840] text-white font-bold py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed group"
+            disabled={loading || !amount || !email || !firstName || !lastName || !address || !city || !postalCode || !country || !phone || !shippingAddress|| !tiktok || !note || !termsAccepted}
+            className="w-full flex justify-center items-center bg-white text-black font-bold py-3 px-4 rounded-lg shadow-md hover:bg-indigo-700 transition-all duration-300 ease-in-out focus:outline-none focus:ring-4 focus:ring-indigo-500/50 disabled:opacity-50 disabled:cursor-not-allowed group"
           >
             {loading ? <SpinnerIcon /> : <span>Confirmer la commande</span>}
             {!loading && (
@@ -334,6 +385,8 @@ const paymentOptions = [
             )}
           </button>
         </div>
+
+
 
         {/* COLONNE DROITE — RÉCAPITULATIF */}
         <div className="bg-white rounded-2xl shadow-lg border border-[#D4AF37] p-6 h-fit animate-fade-in mt-6 lg:mt-10 lg:ml-20">
@@ -355,12 +408,12 @@ const paymentOptions = [
         
         {/* NOUVEAU: Frais de service */}
         <div className="flex justify-between">
-            <span>Frais de service ({PAYMENT_METHOD_NAMES[paymentMethod] || 'N/A'})</span>
+            <span>Frais de service </span>
             <span>+ {serviceFee.toFixed(2)} €</span>
         </div>
 
         {/* Total final mis à jour */}
-        <div className="flex justify-between font-bold text-[#c28840] border-t pt-3 mt-3 text-base">
+        <div className="flex justify-between font-bold text-black border-t pt-3 mt-3 text-base">
             <span>Total à payer</span>
             <span>{grandTotal.toFixed(2)} €</span>
         </div>
@@ -392,7 +445,7 @@ const paymentOptions = [
 
   </div>
   <p className="text-xs text-yellow-100">
-    Vous pouvez joindre notre service client du lundi au vendredi de 9h à 17h.
+    Vous pouvez joindre notre service client par mail.
   </p>
 </footer>
       {/* --- FIN DU FOOTER AJOUTÉ --- */}

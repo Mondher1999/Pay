@@ -41,6 +41,15 @@ export async function fetchClientSecret(amount, note, metadata) {
       country: metadata.country || '',
       phone: metadata.phone || '',
       tiktok: metadata.tiktok || '',
+       // 💡 Nouveauté : ajout du point relais
+       pointRelais_Num: metadata.pointRelais?.Num || '',
+       pointRelais_Nom: metadata.pointRelais?.Nom || '',
+       pointRelais_Adresse1: metadata.pointRelais?.Adresse1 || '',
+       pointRelais_Adresse2: metadata.pointRelais?.Adresse2 || '',
+       pointRelais_CP: metadata.pointRelais?.CP || '',
+       pointRelais_Ville: metadata.pointRelais?.Ville || '',
+
+
     }
   })
 

@@ -41,6 +41,14 @@ export async function POST(req) {
         country: metadata.country || '',
         phone: metadata.phone || '',
         tiktok: metadata.tiktok || '',
+
+        // ✅ point relais est maintenant dans metadata directement
+          pointRelais_Num: metadata.pointRelais_Num || '',
+          pointRelais_Nom: metadata.pointRelais_Nom || '',
+          pointRelais_Adresse1: metadata.pointRelais_Adresse1 || '',
+          pointRelais_Adresse2: metadata.pointRelais_Adresse2 || '',
+          pointRelais_CP: metadata.pointRelais_CP || '',
+          pointRelais_Ville: metadata.pointRelais_Ville || '',
       },
     })
 
