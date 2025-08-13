@@ -271,12 +271,19 @@ const paymentOptions = [
               <input type="text" id="postalCode" value={postalCode} onChange={(e) => setPostalCode(e.target.value)} placeholder="Code postal" className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 placeholder:text-slate-400 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition" />
               <div>
                 <label htmlFor="country" className="text-sm font-medium text-white mb-1 block">Pays</label>
-                <select id="country" value={country} onChange={(e) => setCountry(e.target.value)} className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition">
-                  <option value="FR">France</option>
-                  <option value="BE">Belgique</option>
-                  <option value="ITA">Italie</option>
+                <select
+                id="country"
+                value={country}
+                onChange={(e) => setCountry(e.target.value)}
+                className="w-full px-4 py-3 rounded-xl border border-slate-200 bg-white text-slate-900 focus:border-indigo-500 focus:ring-2 focus:ring-indigo-500/30 focus:outline-none transition"
+              >
+                <option value="FR">France</option>
+                <option value="BE">Belgique</option>
+                <option value="ITA">Italie</option>
                 <option value="GER">Allemagne</option>
-                </select>
+                <option value="LU">Luxembourg</option>
+              </select>
+
               </div>
               <div>
                 <label htmlFor="phone" className="text-sm font-medium text-white mb-1 block">Numéro de téléphone</label>

@@ -45,9 +45,7 @@ const MondialRelayModalSelector = ({ onPointSelected }) => {
         </div>
         <p className="font-bold text-gray-800">5,00 € TTC</p>
       </div>
-      <p className="text-xs text-orange-600 mt-3 flex items-center gap-2">
-        <Truck size={14} /> Frais de port offert pour les prochaines commandes durant le live
-      </p>
+     
       <button
         onClick={() => setIsModalOpen(true)}
         className="w-full bg-black text-white font-bold py-3 mt-4 rounded-lg hover:bg-gray-800 transition-colors"
@@ -66,9 +64,7 @@ const MondialRelayModalSelector = ({ onPointSelected }) => {
         </div>
         <p className="font-bold text-gray-800">5,00 € TTC</p>
       </div>
-      <p className="text-xs text-orange-600 mt-3 flex items-center gap-2">
-        <Truck size={14} /> Frais de port offert pour les prochaines commandes durant le live
-      </p>
+     
       <div className="mt-4 pt-4 border-t">
         <h4 className="font-bold text-gray-900">Point Relais sélectionné</h4>
         <div className="mt-1 text-sm text-gray-700">
